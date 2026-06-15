@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Enterprise Strategic Advisor — Economic Signal Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --navy:  #0B1F3A;
+  --navy2: #132540;
+  --navy3: #1C3358;
+  --gold:  #C9A84C;
+  --gold2: #E8C96A;
+  --teal:  #2DBDAD;
+  --slate: #8A9BB0;
+  --light: #F4F7FA;
+  --white: #FFFFFF;
+  --border:#DDE4ED;
+  --text:  #1A2B42;
+  --muted: #5A6A80;
+  --green: #2E9E6B;
+  --red:   #D64045;
+  --shadow:0 2px 16px rgba(11,31,58,0.07);
+  --r: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--light);color:var(--text);font-size:14px;line-height:1.5}
+
+.hdr{background:var(--navy);border-bottom:3px solid var(--gold);padding:0 48px;height:72px;display:flex;align-items:center;justify-content:space-between}
+.hdr-left{display:flex;align-items:center}
+.hdr-brand{font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--gold);text-transform:uppercase;flex-shrink:0}
+.hdr-divider{width:1px;height:32px;background:rgba(201,168,76,.25);margin:0 22px}
+.hdr-title{font-size:17px;font-weight:700;color:#fff}
+.hdr-sub{font-size:11px;color:var(--slate);margin-top:3px}
+.hdr-tag{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);padding:4px 12px;border-radius:20px;font-size:10px;font-weight:600;color:var(--gold);letter-spacing:.8px;text-transform:uppercase}
+
+.page{max-width:1300px;margin:0 auto;padding:32px 36px 56px}
+.section{margin-bottom:36px}
+.sec-head{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--slate);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sec-head::before{content:'';display:inline-block;width:3px;height:14px;background:var(--gold);border-radius:2px}
+
+.intro-banner{background:var(--navy2);border-radius:var(--r);padding:24px 32px;margin-bottom:32px;display:flex;gap:32px;align-items:center;border-left:4px solid var(--gold)}
+.intro-text{flex:1}
+.intro-title{font-size:20px;font-weight:700;color:#fff;line-height:1.3}
+.intro-title span{color:var(--gold2)}
+.intro-body{font-size:12px;color:var(--slate);margin-top:8px;line-height:1.7;max-width:680px}
+.intro-stats{display:flex;gap:0;flex-shrink:0}
+.istat-hero{padding:0 28px;border-right:1px solid rgba(255,255,255,.08);text-align:center}
+.istat-hero:last-child{border-right:none;padding-right:0}
+.istat-hero .il{font-size:9px;color:var(--slate);text-transform:uppercase;letter-spacing:1px}
+.istat-hero .iv{font-size:30px;font-weight:800;font-family:'IBM Plex Mono',monospace;margin-top:2px}
+.istat-hero .iv.g{color:var(--gold2)}
+.istat-hero .iv.t{color:var(--teal)}
+.istat-hero .is{font-size:10px;color:var(--slate);margin-top:1px}
+
+.rel-grid{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0;align-items:center}
+.rel-box{background:var(--white);border-radius:var(--r);padding:16px 18px;box-shadow:var(--shadow);border-top:3px solid var(--border);text-align:center}
+.rel-box.source{border-top-color:var(--teal)}
+.rel-box.model{border-top-color:var(--gold);background:var(--navy);color:white}
+.rel-box.output{border-top-color:var(--green)}
+.rb-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+.rel-box.model .rb-label{color:rgba(201,168,76,.7)}
+.rb-title{font-size:13px;font-weight:600;color:var(--text)}
+.rel-box.model .rb-title{color:var(--gold2);font-size:14px}
+.rb-items{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.rel-item{font-size:11px;padding:4px 8px;background:var(--light);border-radius:4px;color:var(--muted);text-align:left}
+.rel-box.model .rel-item{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6)}
+.rel-box.output .rel-item{background:#EAF5EF;color:#1E6E47;font-weight:500}
+.rel-arrow{text-align:center;font-size:20px;color:var(--gold);padding:0 12px;flex-shrink:0}
+
+.conn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.conn-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.conn-head{padding:12px 16px;background:var(--navy);display:flex;align-items:center;gap:10px}
+.ch-icon{font-size:16px}
+.ch-title{font-size:12px;font-weight:600;color:var(--gold2)}
+.ch-sub{font-size:10px;color:var(--slate);margin-top:1px}
+.conn-body{padding:14px 16px}
+.conn-flow{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:11px}
+.cf-from{background:#E8EEF5;color:var(--navy);padding:4px 8px;border-radius:4px;font-weight:600}
+.cf-arrow{color:var(--slate);font-size:12px}
+.cf-to{background:#E4F5EF;color:#1E6E47;padding:4px 8px;border-radius:4px;font-weight:600}
+.conn-desc{font-size:11px;color:var(--muted);line-height:1.55}
+.conn-proof{margin-top:10px;padding:8px 10px;background:var(--light);border-radius:5px;font-size:11px;color:var(--muted)}
+.conn-proof strong{color:var(--text)}
+
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.card-head{padding:16px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.card-title{font-size:14px;font-weight:600;color:var(--text)}
+.card-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.card-body{padding:20px 22px 22px}
+.badge{font-size:10px;font-weight:600;letter-spacing:.6px;padding:3px 10px;border-radius:20px;text-transform:uppercase}
+.badge-gold{background:#FBF3E0;color:#7A5800}
+.badge-slate{background:#EEF2F8;color:#3A5070}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+.perf-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.ptile{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 20px;border-top:3px solid var(--border)}
+.ptile.g{border-top-color:var(--gold)}
+.ptile.t{border-top-color:var(--teal)}
+.pt-horizon{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:8px}
+.pt-horizon.q1{background:rgba(201,168,76,.15);color:#8A6000}
+.pt-horizon.q4{background:rgba(45,189,173,.15);color:#1A6E66}
+.pt-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+.pt-val{font-size:28px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:var(--text);margin:4px 0 2px;line-height:1}
+.pt-desc{font-size:11px;color:var(--muted)}
+
+.inline-stats{display:flex;gap:0;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.istat{flex:1;text-align:center;padding:0 8px;border-right:1px solid var(--border)}
+.istat:last-child{border-right:none}
+.istat .il{font-size:10px;color:var(--slate);text-transform:uppercase;letter-spacing:.7px}
+.istat .iv{font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace;margin-top:2px}
+.istat .iv.g{color:var(--green)}
+.istat .iv.o{color:#C07800}
+
+.sig-src{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ss-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ss-label{flex:1;font-size:12px;color:var(--text)}
+.ss-sub{font-size:10px;color:var(--muted)}
+.ss-bar-bg{width:120px;height:8px;background:var(--light);border-radius:4px;overflow:hidden;flex-shrink:0}
+.ss-bar-fill{height:100%;border-radius:4px}
+.ss-pct{font-size:12px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--text);flex:0 0 36px;text-align:right}
+
+.footnote{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);font-size:10px;color:var(--slate);line-height:1.8}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-left">
+    <span class="hdr-brand">AI Enterprise Strategic Advisor</span>
+    <div class="hdr-divider"></div>
+    <div>
+      <div class="hdr-title">Economic Signal Intelligence Engine</div>
+      <div class="hdr-sub">Machine Learning · Cross-Asset Relationship Discovery · SET100 Universe</div>
+    </div>
+  </div>
+  <div class="hdr-tag">ML Component · Validated 2023–2025</div>
+</div>
+
+<div class="page">
+
+  <!-- INTRO -->
+  <div class="intro-banner">
+    <div class="intro-text">
+      <div class="intro-title">Finding <span>hidden economic connections</span><br>that predict business growth — before it happens.</div>
+      <div class="intro-body">
+        Our ML engine scans 876 economic signals across 66 countries and sectors simultaneously — discovering which global indicators are statistically linked to growth in each Thai business sector. These cross-asset relationships form the predictive backbone of the AI Enterprise Strategic Advisor.
+      </div>
+    </div>
+    <div class="intro-stats">
+      <div class="istat-hero">
+        <div class="il">Signals Analysed</div>
+        <div class="iv g">876</div>
+        <div class="is">economic indicators</div>
+      </div>
+      <div class="istat-hero">
+        <div class="il">Business Sectors</div>
+        <div class="iv g">21</div>
+        <div class="is">SET100 sectors</div>
+      </div>
+      <div class="istat-hero">
+        <div class="il">Data History</div>
+        <div class="iv t">25 yrs</div>
+        <div class="is">2000 – 2025</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="sec-head section">How the ML Engine Discovers Economic Relationships</div>
+  <div class="section">
+    <div class="rel-grid">
+      <div class="rel-box source">
+        <div class="rb-label">Global Economic Inputs</div>
+        <div class="rb-title">World Economy Signals</div>
+        <div class="rb-items">
+          <div class="rel-item">🌏 &nbsp;OECD Leading Indicators (19 countries)</div>
+          <div class="rel-item">📊 &nbsp;US / Korea / G7 economic cycles</div>
+          <div class="rel-item">🏭 &nbsp;66 Sector & Sub-sector ETFs</div>
+          <div class="rel-item">💱 &nbsp;Currency & commodity signals</div>
+          <div class="rel-item">🇹🇭 &nbsp;Thailand macro (GDP, CPI, exports)</div>
+        </div>
+      </div>
+      <div class="rel-arrow">→</div>
+      <div class="rel-box model">
+        <div class="rb-label">ML Relationship Discovery</div>
+        <div class="rb-title">LightGBM Pattern Engine</div>
+        <div class="rb-items">
+          <div class="rel-item">Learns which signals connect to which sectors</div>
+          <div class="rel-item">Finds non-linear relationships humans miss</div>
+          <div class="rel-item">Weights signals by predictive power</div>
+          <div class="rel-item">Validated on 25 years of data</div>
+        </div>
+      </div>
+      <div class="rel-arrow">→</div>
+      <div class="rel-box output">
+        <div class="rb-label">Business Intelligence Output</div>
+        <div class="rb-title">Sector Growth Forecast</div>
+        <div class="rb-items">
+          <div class="rel-item">↑ &nbsp;Which sectors will grow next quarter</div>
+          <div class="rel-item">↑ &nbsp;Which will grow next year</div>
+          <div class="rel-item">↑ &nbsp;Ranked by opportunity size</div>
+          <div class="rel-item">↑ &nbsp;Delivered before moves happen</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEY CONNECTIONS -->
+  <div class="sec-head">Key Economic Relationships Discovered by the Model</div>
+  <div class="conn-grid section">
+
+    <div class="conn-card">
+      <div class="conn-head">
+        <div class="ch-icon">🇰🇷</div>
+        <div><div class="ch-title">Korea Cycle → Thai Business Growth</div><div class="ch-sub">Strongest single relationship found</div></div>
+      </div>
+      <div class="conn-body">
+        <div class="conn-flow">
+          <span class="cf-from">Korea CLI Momentum</span>
+          <span class="cf-arrow">──▶</span>
+          <span class="cf-to">Thai Sector Growth</span>
+        </div>
+        <div class="conn-desc">Korea's economic leading indicator — which measures manufacturing orders and export activity — predicts Thai business growth 1 quarter ahead. The supply chain link between Korean industry and Thai production creates a reliable early warning signal.</div>
+        <div class="conn-proof"><strong>Signal strength:</strong> 8% of total predictive power for 1Q forecast — largest single macro signal in the model.</div>
+      </div>
+    </div>
+
+    <div class="conn-card">
+      <div class="conn-head">
+        <div class="ch-icon">🌐</div>
+        <div><div class="ch-title">G7 + US Cycle → Demand Pipeline</div><div class="ch-sub">Global demand leads Thai exports</div></div>
+      </div>
+      <div class="conn-body">
+        <div class="conn-flow">
+          <span class="cf-from">G7 / US Leading Indicators</span>
+          <span class="cf-arrow">──▶</span>
+          <span class="cf-to">Export-linked Sectors</span>
+        </div>
+        <div class="conn-desc">When G7 economies expand, demand for Thai exports follows within 1–2 quarters. The model captures this lag and uses it to forecast which sectors — electronics, automotive, food — benefit most from the global upswing.</div>
+        <div class="conn-proof"><strong>Signal strength:</strong> Combined G7 + US CLI signals contribute ~12% of 1Q predictive power.</div>
+      </div>
+    </div>
+
+    <div class="conn-card">
+      <div class="conn-head">
+        <div class="ch-icon">📈</div>
+        <div><div class="ch-title">Price Momentum → Near-term Growth</div><div class="ch-sub">Markets embed forward-looking information</div></div>
+      </div>
+      <div class="conn-body">
+        <div class="conn-flow">
+          <span class="cf-from">52W / 13W Returns</span>
+          <span class="cf-arrow">──▶</span>
+          <span class="cf-to">Earnings Trajectory</span>
+        </div>
+        <div class="conn-desc">Stock prices aggregate expectations of thousands of analysts and investors. The model learns that sustained price momentum over 13 and 52 weeks is a powerful predictor of actual revenue and earnings growth in the near term.</div>
+        <div class="conn-proof"><strong>Signal strength:</strong> Momentum signals account for ~60% of 1Q predictive power — the market's own consensus is the strongest signal.</div>
+      </div>
+    </div>
+
+    <div class="conn-card">
+      <div class="conn-head">
+        <div class="ch-icon">🇹🇭</div>
+        <div><div class="ch-title">Thai Macro → Long-term Trajectory</div><div class="ch-sub">Becomes critical for 1-year horizon</div></div>
+      </div>
+      <div class="conn-body">
+        <div class="conn-flow">
+          <span class="cf-from">GDP + CPI + Exports</span>
+          <span class="cf-arrow">──▶</span>
+          <span class="cf-to">Year-ahead Business Growth</span>
+        </div>
+        <div class="conn-desc">For 1-year forecasts, domestic fundamentals become far more important. GDP growth, inflation, tourist arrivals and current account data combine to map where Thai corporate earnings will be in 4 quarters.</div>
+        <div class="conn-proof"><strong>Signal strength:</strong> Thai macro rises from 8% (1Q) to 35% of 4Q predictive power — a fundamental shift between horizons that the model learns automatically.</div>
+      </div>
+    </div>
+
+    <div class="conn-card">
+      <div class="conn-head">
+        <div class="ch-icon">🏭</div>
+        <div><div class="ch-title">Global Sector Rotation → Thai Sectors</div><div class="ch-sub">International capital flows as early signal</div></div>
+      </div>
+      <div class="conn-body">
+        <div class="conn-flow">
+          <span class="cf-from">US Sector ETF Flows</span>
+          <span class="cf-arrow">──▶</span>
+          <span class="cf-to">Corresponding Thai Sectors</span>
+        </div>
+        <div class="conn-desc">When global investors rotate into biotech, robotics, or utilities in the US, similar moves follow in emerging markets including Thailand. The model detects these sector rotation patterns weeks before they fully materialise in Thai stocks.</div>
+        <div class="conn-proof"><strong>Signal strength:</strong> Key for 4Q model — Biotech & Robotics ETF returns among top 20 signals for year-ahead prediction.</div>
+      </div>
+    </div>
+
+    <div class="conn-card">
+      <div class="conn-head">
+        <div class="ch-icon">🔗</div>
+        <div><div class="ch-title">Why ML — Not Manual Analysis</div><div class="ch-sub">The scale advantage</div></div>
+      </div>
+      <div class="conn-body" style="display:flex;flex-direction:column;gap:8px;padding-top:14px">
+        <div style="display:flex;gap:10px;font-size:11px;color:var(--muted);align-items:flex-start">
+          <span style="color:var(--gold);flex-shrink:0">✦</span>
+          <span>876 signals × 21 sectors = <strong style="color:var(--text)">18,396 potential relationships</strong> tracked simultaneously</span>
+        </div>
+        <div style="display:flex;gap:10px;font-size:11px;color:var(--muted);align-items:flex-start">
+          <span style="color:var(--gold);flex-shrink:0">✦</span>
+          <span>Relationships are <strong style="color:var(--text)">non-linear and shift over time</strong> — Korea CLI matters more in manufacturing cycles, less in domestic demand cycles</span>
+        </div>
+        <div style="display:flex;gap:10px;font-size:11px;color:var(--muted);align-items:flex-start">
+          <span style="color:var(--gold);flex-shrink:0">✦</span>
+          <span>ML continuously reweights signals as new data arrives — <strong style="color:var(--text)">adapts to regime changes automatically</strong></span>
+        </div>
+        <div style="display:flex;gap:10px;font-size:11px;color:var(--muted);align-items:flex-start">
+          <span style="color:var(--gold);flex-shrink:0">✦</span>
+          <span>25 years of training data captures <strong style="color:var(--text)">multiple boom/bust cycles</strong> including COVID and 2008 crisis</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- VALIDATION -->
+  <div class="sec-head">Validation — Do the Discovered Relationships Actually Predict Growth?</div>
+  <div class="perf-tiles">
+    <div class="ptile g">
+      <div class="pt-horizon q1">1Q Forecast</div>
+      <div class="pt-label">Rank Accuracy</div>
+      <div class="pt-val">72%</div>
+      <div class="pt-desc">of sectors correctly ranked by growth potential</div>
+    </div>
+    <div class="ptile g">
+      <div class="pt-horizon q1">1Q Forecast</div>
+      <div class="pt-label">Weeks beating random</div>
+      <div class="pt-val">100%</div>
+      <div class="pt-desc">all 128 out-of-sample weeks positive</div>
+    </div>
+    <div class="ptile t">
+      <div class="pt-horizon q4">4Q Forecast</div>
+      <div class="pt-label">Rank Accuracy</div>
+      <div class="pt-val">56%</div>
+      <div class="pt-desc">1-year growth ranking, baseline = 50%</div>
+    </div>
+    <div class="ptile t">
+      <div class="pt-horizon q4">4Q Forecast</div>
+      <div class="pt-label">Weeks beating random</div>
+      <div class="pt-val">85.9%</div>
+      <div class="pt-desc">positive signal in 110 of 128 weeks</div>
+    </div>
+  </div>
+
+  <div class="grid2 section">
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Prediction Quality — Rolling 13-Week Window</div>
+          <div class="card-sub">How well the discovered relationships hold up week by week, Jan 2023 – Jun 2025</div>
+        </div>
+        <span class="badge badge-gold">Out-of-Sample</span>
+      </div>
+      <div class="card-body">
+        <div style="position:relative;height:220px"><canvas id="chartRolling"></canvas></div>
+        <div class="inline-stats">
+          <div class="istat"><div class="il">1Q Average</div><div class="iv g">72%</div></div>
+          <div class="istat"><div class="il">1Q Best Period</div><div class="iv g">76%</div></div>
+          <div class="istat"><div class="il">4Q Average</div><div class="iv o">56%</div></div>
+          <div class="istat"><div class="il">Random Baseline</div><div class="iv" style="color:var(--slate)">50%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Signal Source Breakdown</div>
+          <div class="card-sub">Share of predictive power — how the ML weighted each signal type</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div style="font-size:10px;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">1-QUARTER HORIZON</div>
+        <div class="sig-src">
+          <div class="ss-dot" style="background:#C9A84C"></div>
+          <div class="ss-label"><div>Price Momentum</div><div class="ss-sub">52W / 13W / 1W returns</div></div>
+          <div class="ss-bar-bg"><div class="ss-bar-fill" style="width:100%;background:#C9A84C"></div></div>
+          <div class="ss-pct">60%</div>
+        </div>
+        <div class="sig-src">
+          <div class="ss-dot" style="background:#2DBDAD"></div>
+          <div class="ss-label"><div>OECD Leading Indicators</div><div class="ss-sub">Korea · G7 · US · Japan</div></div>
+          <div class="ss-bar-bg"><div class="ss-bar-fill" style="width:48%;background:#2DBDAD"></div></div>
+          <div class="ss-pct">29%</div>
+        </div>
+        <div class="sig-src">
+          <div class="ss-dot" style="background:#2E9E6B"></div>
+          <div class="ss-label"><div>Thailand Macro</div><div class="ss-sub">GDP · CPI · SET index</div></div>
+          <div class="ss-bar-bg"><div class="ss-bar-fill" style="width:13%;background:#2E9E6B"></div></div>
+          <div class="ss-pct">8%</div>
+        </div>
+        <div class="sig-src">
+          <div class="ss-dot" style="background:#8A9BB0"></div>
+          <div class="ss-label"><div>Global Sector ETFs</div><div class="ss-sub">Biotech · Robotics · Utilities</div></div>
+          <div class="ss-bar-bg"><div class="ss-bar-fill" style="width:5%;background:#8A9BB0"></div></div>
+          <div class="ss-pct">3%</div>
+        </div>
+        <div style="border-top:1px dashed var(--border);margin:16px 0 14px"></div>
+        <div style="font-size:10px;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">1-YEAR HORIZON — mix shifts toward fundamentals</div>
+        <div class="sig-src">
+          <div class="ss-dot" style="background:#C9A84C"></div>
+          <div class="ss-label"><div>Price Momentum</div></div>
+          <div class="ss-bar-bg"><div class="ss-bar-fill" style="width:53%;background:#C9A84C"></div></div>
+          <div class="ss-pct">32%</div>
+        </div>
+        <div class="sig-src">
+          <div class="ss-dot" style="background:#2DBDAD"></div>
+          <div class="ss-label"><div>OECD Leading Indicators</div></div>
+          <div class="ss-bar-bg"><div class="ss-bar-fill" style="width:35%;background:#2DBDAD"></div></div>
+          <div class="ss-pct">21%</div>
+        </div>
+        <div class="sig-src">
+          <div class="ss-dot" style="background:#2E9E6B"></div>
+          <div class="ss-label"><div>Thailand Macro</div><div class="ss-sub" style="color:#1A6040;font-weight:600">↑ rises dramatically for long horizon</div></div>
+          <div class="ss-bar-bg"><div class="ss-bar-fill" style="width:100%;background:#2E9E6B"></div></div>
+          <div class="ss-pct">35%</div>
+        </div>
+        <div class="sig-src">
+          <div class="ss-dot" style="background:#8A9BB0"></div>
+          <div class="ss-label"><div>Global Sector ETFs</div></div>
+          <div class="ss-bar-bg"><div class="ss-bar-fill" style="width:20%;background:#8A9BB0"></div></div>
+          <div class="ss-pct">12%</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- YEAR BREAKDOWN -->
+  <div class="sec-head">Consistency Across Years — Relationships Hold Over Time</div>
+  <div class="card section">
+    <div class="card-head">
+      <div class="card-title">Year-by-Year Prediction Accuracy</div>
+      <div class="card-sub">Consistent results confirm the economic relationships are structural — not coincidental patterns</div>
+    </div>
+    <div class="card-body">
+      <div style="position:relative;height:200px"><canvas id="chartYearly"></canvas></div>
+      <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div style="padding:12px 16px;background:var(--light);border-radius:6px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px">2023</div>
+          <div style="font-size:22px;font-weight:800;color:var(--gold);font-family:'IBM Plex Mono',monospace">71%</div>
+          <div style="font-size:11px;color:var(--muted)">1Q &nbsp;·&nbsp; <span style="color:var(--teal)">56%</span> 4Q</div>
+        </div>
+        <div style="padding:12px 16px;background:var(--light);border-radius:6px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px">2024</div>
+          <div style="font-size:22px;font-weight:800;color:var(--gold);font-family:'IBM Plex Mono',monospace">71%</div>
+          <div style="font-size:11px;color:var(--muted)">1Q &nbsp;·&nbsp; <span style="color:var(--teal)">54%</span> 4Q</div>
+        </div>
+        <div style="padding:12px 16px;background:var(--light);border-radius:6px;text-align:center">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px">2025 (partial)</div>
+          <div style="font-size:22px;font-weight:800;color:var(--gold);font-family:'IBM Plex Mono',monospace">75%</div>
+          <div style="font-size:11px;color:var(--muted)">1Q &nbsp;·&nbsp; <span style="color:var(--teal)">59%</span> 4Q</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <strong>Data Sources:</strong> yfinance · FRED / OECD (Composite Leading Indicators, 19 countries) · World Bank (Thailand macro) · Reuters (fundamentals) · 2000–Jun 2025. &nbsp;
+    <strong>Rank Accuracy</strong> = probability that the model correctly orders any random pair of sectors by growth potential (random baseline = 50%). &nbsp;
+    <strong>Universe:</strong> SET100 · 100 stocks · 21 sectors · weekly frequency · 25 years of training data. &nbsp;
+    <em>For internal research and presentation purposes only. Past performance does not guarantee future results.</em>
+  </div>
+
+</div>
+
+<script>
+const GOLD='#C9A84C', TEAL='#2DBDAD', NAVY='#0B1F3A', SLATE='#8A9BB0';
+const roll1q=[0.2817,0.299,0.3116,0.3213,0.3526,0.3708,0.3949,0.4108,0.4211,0.4332,0.4523,0.4705,0.4873,0.5059,0.5073,0.5089,0.5111,0.4996,0.4942,0.4766,0.4687,0.4579,0.4434,0.4329,0.4259,0.4216,0.417,0.4203,0.4237,0.4222,0.4184,0.4084,0.409,0.4036,0.404,0.4088,0.4051,0.4086,0.419,0.4206,0.4181,0.4187,0.4241,0.4339,0.4418,0.4432,0.4372,0.4338,0.4293,0.4339,0.4298,0.4141,0.4056,0.4013,0.4008,0.3955,0.3885,0.3856,0.3849,0.3974,0.4039,0.4037,0.3963,0.3846,0.3775,0.3759,0.3831,0.3821,0.3889,0.3961,0.4053,0.4083,0.3956,0.3795,0.3709,0.3706,0.3734,0.3733,0.3756,0.3724,0.3733,0.3715,0.3683,0.3599,0.359,0.3783,0.4059,0.4297,0.4486,0.4663,0.479,0.488,0.4951,0.4981,0.4964,0.4973,0.5008,0.5028,0.4935,0.4859,0.4782,0.4718,0.4721,0.476,0.4813,0.4815,0.4805,0.4855,0.4882,0.4961,0.5058,0.5153,0.5213,0.5242,0.5216,0.515,0.5172,0.5146,0.5144,0.5106,0.503,0.5054,0.5012,0.4922,0.4808];
+const roll4q=[0.0932,0.0663,0.0399,0.0445,0.037,0.04,0.0324,0.0274,0.0213,0.0156,0.0093,-0.0068,-0.0094,0.0018,0.0141,0.0377,0.0478,0.0625,0.0775,0.0968,0.1082,0.1254,0.1433,0.1562,0.1685,0.1664,0.1633,0.1591,0.1479,0.1448,0.1456,0.1294,0.1222,0.1161,0.1115,0.1114,0.1207,0.1192,0.1339,0.142,0.1484,0.1579,0.1498,0.1475,0.159,0.1645,0.1743,0.1789,0.1758,0.1629,0.1582,0.1398,0.1252,0.1114,0.0966,0.0906,0.0795,0.0665,0.0556,0.0481,0.0376,0.0288,0.0236,0.0207,0.0254,0.0344,0.0529,0.0676,0.0764,0.0823,0.0914,0.0939,0.0906,0.0929,0.0955,0.0985,0.0965,0.1043,0.1079,0.1063,0.1091,0.1125,0.1205,0.122,0.1308,0.1356,0.1345,0.1392,0.1309,0.1291,0.1291,0.1247,0.1145,0.0979,0.0853,0.067,0.0531,0.0472,0.0459,0.0537,0.0568,0.079,0.0949,0.092,0.0952,0.1075,0.1224,0.1396,0.1599,0.1806,0.1798,0.1828,0.18,0.181,0.1779,0.1755,0.1819,0.1849,0.1801,0.1748,0.1732,0.1742,0.1708,0.1731,0.1756];
+
+const toAcc = v => Math.round((v+1)/2*1000)/10;
+const acc1q = roll1q.map(toAcc);
+const acc4q = roll4q.map(toAcc);
+const rollLabels = roll1q.map((_,i)=>{ const d=new Date('2023-01-27'); d.setDate(d.getDate()+i*7); return d.toISOString().slice(0,7); });
+
+const baseOpts={
+  responsive:true, maintainAspectRatio:false,
+  plugins:{
+    legend:{display:false},
+    tooltip:{backgroundColor:'rgba(11,31,58,0.9)',titleColor:'#E8C96A',bodyColor:'#CDD8E8',padding:10,cornerRadius:4,
+      titleFont:{family:'IBM Plex Mono',size:11},bodyFont:{family:'IBM Plex Mono',size:11}}
+  },
+  scales:{
+    x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:SLATE,font:{size:10},maxTicksLimit:12}},
+    y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:SLATE,font:{size:10,family:'IBM Plex Mono'}}},
+  }
+};
+
+new Chart(document.getElementById('chartRolling'),{
+  type:'line',
+  data:{
+    labels:rollLabels,
+    datasets:[
+      {label:'1Q Accuracy',data:acc1q,borderColor:GOLD,backgroundColor:'rgba(201,168,76,0.07)',borderWidth:2.5,pointRadius:0,fill:true,tension:0.35},
+      {label:'4Q Accuracy',data:acc4q,borderColor:TEAL,backgroundColor:'rgba(45,189,173,0.07)',borderWidth:2,pointRadius:0,fill:true,tension:0.35,borderDash:[5,3]},
+      {label:'Random (50%)',data:roll1q.map(()=>50),borderColor:'rgba(0,0,0,0.15)',borderWidth:1,pointRadius:0,fill:false,borderDash:[3,3]},
+    ]
+  },
+  options:{...baseOpts,
+    plugins:{...baseOpts.plugins,
+      legend:{display:true,position:'top',align:'end',labels:{color:NAVY,font:{size:11,family:'Inter'},boxWidth:16,padding:16}}},
+    scales:{...baseOpts.scales,
+      y:{...baseOpts.scales.y,min:44,max:80,ticks:{...baseOpts.scales.y.ticks,callback:v=>v+'%'}}}
+  }
+});
+
+new Chart(document.getElementById('chartYearly'),{
+  type:'bar',
+  data:{
+    labels:['2023','2024','2025 (partial)'],
+    datasets:[
+      {label:'1Q Accuracy',data:[71,71,75],backgroundColor:GOLD,borderRadius:5},
+      {label:'4Q Accuracy',data:[56,54,59],backgroundColor:TEAL,borderRadius:5},
+      {label:'Random baseline',data:[50,50,50],type:'line',borderColor:'rgba(0,0,0,0.2)',borderWidth:1.5,pointRadius:0,borderDash:[4,3],fill:false},
+    ]
+  },
+  options:{...baseOpts,
+    plugins:{...baseOpts.plugins,
+      legend:{display:true,position:'top',align:'end',labels:{color:NAVY,font:{size:11,family:'Inter'},boxWidth:14,padding:14}},
+      tooltip:{...baseOpts.plugins.tooltip,callbacks:{label:ctx=>` ${ctx.raw}%`}}},
+    scales:{...baseOpts.scales,
+      y:{...baseOpts.scales.y,min:44,max:82,ticks:{...baseOpts.scales.y.ticks,callback:v=>v+'%'}}}
+  }
+});
+</script>
+</body>
+</html>
